@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>instragram  url downloader</title>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+  {% include "_nav.html" %}
+<script>
+    function toggleTextField() {
+    var checkbox = document.getElementById("flexCheckDefault");
+    var textField = document.getElementById("textField");
+
+    textField.style.display = checkbox.checked ? "block" : "none";
+}
+</script>
+
+    <form action="/responses" method="post">
+<div class="container">
+    <h1>Enter the link below</h1>
+    <input type="text" class="form-control" placeholder="Normal input" name="url" required>
+    <div class="form-check">
+        <label for="flexCheckDefault">Check me:</label>
+        <input class="form-check-input" type="checkbox" value="True" id="flexCheckDefault" name="new_folder" onchange="toggleTextField()">
+        
+        <br>
+        <input type="text" id="textField" style="display: none;" name="folder"> <!-- Initially hidden -->
+      </div>
+    <button type="submit" class="btn btn-primary">Primary</button>
+  </div>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
