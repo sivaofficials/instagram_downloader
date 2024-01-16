@@ -1,0 +1,101 @@
+import os
+import sched
+import time
+import threading
+import json
+
+def time_():
+  sec=time.time()
+  local_time = time.ctime(sec)
+  print("Local time:", local_time)
+
+
+scheduler = sched.scheduler(time.time, time.sleep)
+
+# def json_(log_obj):
+#   with open("log_instagram.json", "w") as outfile:
+#     outfile.write(log_obj)
+
+class Person:
+  def __init__(self, username,id_):
+    self.username = username
+    self.id=id_
+    self.logid="--login "+id_
+
+  def fulldownload(self):
+    result = os.popen("instaloader {} {}".format(self.username,self.logid)).read()
+    time_()
+    print("1.fulldownload"+self.username)
+
+  def profile(self):
+    result = os.popen("instaloader --profile {} {}".format(self.username,self.logid)).read()
+    time_()
+    print("2.profile"+self.username)
+
+  def fulldownload_laststamp(self):
+    result = os.popen('instaloader --latest-stamps {} {}'.format(self.username,self.logid)).read()
+    time_()
+    print("3.laststamp"+self.username)
+
+  def fulldownload_stories(self):
+    result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
+    time_()
+    print("4.story"+self.username)
+
+  def fulldownload_highlights(self):
+    result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()   
+    time_() 
+    print('5.highlight'+self.username)
+
+  def fulldownload_tagged(self):
+    result = os.popen('instaloader --tagged {} {}'.format(self.username,self.logid)).read()  
+    time_()
+    print('6.tag'+self.username)
+
+  def fulldownload_geotags(self):
+    result = os.popen('instaloader --geotags profile {} {}'.format(self.username,self.logid)).read() 
+    time_()
+    print('7.geo'+self.username)
+
+p1 = Person("_shwetha_232","sivhx_06")
+p2 = Person("abi__sridhar","sivhx_06")
+p3 = Person("bhavyasree__15","sivhx_06")
+p4 = Person("pree26._","sivhx_06")
+p5 = Person("_.dharu._20","sivhx_06")
+# p3 = Person("krithik_2005","bhuva_natara")
+
+
+# print(p1.username)
+# p2.profile()
+
+def time_sheduler(person):
+  person.fulldownload_highlights()
+  person.fulldownload()
+  while True:
+    
+    # scheduler.enter(170, 1, person.profile, ())
+    # scheduler.enter(150, 1, person.fulldownload_laststamp, ())
+    scheduler.enter(10, 1, person.fulldownload_stories, ())
+    # scheduler.enter(120, 1, person.fulldownload_highlights, ())
+    # scheduler.enter(518400, 1, person.fulldownload_tagged, ())
+    # scheduler.enter(604800, 1, person.fulldownload_geotags, ())
+    scheduler.run()
+
+list_=[p1,p2,p3,p4,p5]
+
+for i in list_:
+  i = threading.Thread(target=time_sheduler, args=(i,))
+  i.start()
+  time.sleep(60)
+
+
+
+
+# def login():
+#     username= input("enter useusername:")
+#     result = os.popen('instaloader --login {}'.format(username)).read()  
+
+
+
+
+
