@@ -1,4 +1,3 @@
-from email import message
 import os
 import sched
 import time
@@ -48,41 +47,38 @@ class Person:
     print("3.laststamp"+self.username)
 
   def fulldownload_stories(self):
-    try:
     #result = os.popen('echo "--stories" {} {}'.format(self.username,self.logid)).read()
-      result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
-      time_()
-      notification("4.story"+self.username)
-      print("4.story"+self.username)
-    except Exception as e:
-      error_message = str(e)
-      if "400 Bad Request" in error_message:
-        message="400 Bad Request"
-        raise RequestError(notification(message))
-      elif "401 Unauthorized" in error_message:
-        message="401 Unauthorized"
-        raise RequestError(notification(message))
-      else:
-        print(f"Error occurred: {e}")
-
+    result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
+    if "400 Bad Request" in error_message:
+      message="400 Bad Request"
+      notification(message)
+    elif "401 Unauthorized" in error_message:
+      message="401 Unauthorized"
+      notification(message)
+    else:
+      print(f"Error occurred: {e}")   
+    time_() 
+    notification("5.highlight"+self.username)
+    print('5.highlight'+self.username)
+    time_()
+    notification("4.story"+self.username)
+    print("4.story"+self.username)
 
   def fulldownload_highlights(self):
-    #result = os.popen('echo --highlights {} {}'.format(self.username,self.logid)).read()
-    try:
-      result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()   
-      time_() 
-      notification("5.highlight"+self.username)
-      print('5.highlight'+self.username)
-    except Exception as e:
-      error_message = str(e)
-      if "400 Bad Request" in error_message:
-        message="400 Bad Request"
-        raise RequestError(notification(message))
-      elif "401 Unauthorized" in error_message:
-        message="401 Unauthorized"
-        raise RequestError(notification(message))
-      else:
-        print(f"Error occurred: {e}")
+    result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()
+    
+    if "400 Bad Request" in error_message:
+      message="400 Bad Request"
+      notification(message)
+    elif "401 Unauthorized" in error_message:
+      message="401 Unauthorized"
+      notification(message)
+    else:
+      print(f"Error occurred: {e}")   
+    time_() 
+    notification("5.highlight"+self.username)
+    print('5.highlight'+self.username)
+
 
 
   def fulldownload_tagged(self):
@@ -106,11 +102,6 @@ p9 = Person("__.swarthmi","sivhx_06")
 p10 = Person("sravani.nerusu","sivhx_06")
 p11 = Person("haripriyayyyy","sivhx_06")
 p12 = Person("pavani_rajoli","sivhx_06")
-# p3 = Person("krithik_2005","bhuva_natara")
-
-
-# print(p1.username)
-# p2.profile()
 
 def time_sheduler(person):
   person.fulldownload_stories()
@@ -118,23 +109,13 @@ def time_sheduler(person):
 
 def time_sheduler1(person):
   person.fulldownload_highlights()
-  # scheduler.enter(2000, 1, person.fulldownload_stories, ())
-  # scheduler.enter(3000, 1, person.fulldownload_stories, ())
-    
-    # scheduler.enter(170, 1, person.profile, ())
-    # scheduler.enter(150, 1, person.fulldownload_laststamp, ())
-    
-    # scheduler.enter(120, 1, person.fulldownload_highlights, ())
-    # scheduler.enter(518400, 1, person.fulldownload_tagged, ())
-    # scheduler.enter(604800, 1, person.fulldownload_geotags, ())
-  # scheduler.run()
 
-list_=[p3,p4,p5,p6,p9,p10,p11,p3,p4,p5,p6,p12]
-# list_=[p12]
+
+list_=[p9,p10,p11,p3,p4,p5,p6,p12]
+
 
 for i in list_:
-  # i = threading.Thread(target=time_sheduler, args=(i,))
-  # i.start()
+
   time_sheduler(i)
   time.sleep(300)
   time_sheduler1(i)
@@ -143,32 +124,6 @@ for i in list_:
 
 
  
-# After every hour geeks() is called.
-# schedule.every(3).hour.do(p1.fulldownload_stories)
-# schedule.every(3).hour.do(p2.fulldownload_stories)
-# schedule.every(3).hour.do(p4.fulldownload_stories)
-# schedule.every(3).hour.do(p5.fulldownload_stories)
- 
-# Every day at 12am or 00:00 time bedtime() is called.
-
- 
-# Loop so that the scheduling task
-# keeps on running all time.
-# while True:
- 
-#     # Checks whether a scheduled task 
-#     # is pending to run or not
-#     schedule.run_pending()
-#     time.sleep(1)
-
-
-
-
-# def login():
-#     username= input("enter useusername:")
-#     result = os.popen('instaloader --login {}'.format(username)).read()  
-
-
 
 
 
