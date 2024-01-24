@@ -91,17 +91,7 @@ class Person:
     time_()
     print('7.geo'+self.username)
 
-# p1 = Person("_shwetha_232","sivhx_06")
-p3 = Person("bhavyasree__15","sivhx_06")
-p4 = Person("pree26._","sivhx_06")
-p5 = Person("_.dharu._20","sivhx_06")
-p6 = Person("mansi_mali23","sivhx_06")
-p7 = Person("_.br.in.da._","sivhx_06")
-p8 = Person("pavithra_3210_","sivhx_06")
-p9 = Person("__.swarthmi","sivhx_06")
-p10 = Person("sravani.nerusu","sivhx_06")
-p11 = Person("haripriyayyyy","sivhx_06")
-p12 = Person("pavani_rajoli","sivhx_06")
+
 
 def time_sheduler(person):
   person.fulldownload_stories()
