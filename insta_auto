@@ -1,119 +1,51 @@
-import os
-import sched
-import time
-import threading
-import json
-import schedule
-import requests
-from datetime import datetime
+import instaloader
+from os.path import expanduser
 
-now = datetime.now()
+def login_and_load_session(L, session_file):
+    try:
+        # Load session from file
+        L.load_session_from_file(session_file)
+        print("Session loaded successfully.")
+    except instaloader.InstaloaderException:
+        # If session file doesn't exist or is invalid, perform login
+        L.context.log("Logging in...")
+        L.context.username = input("Enter your Instagram username: ")
+        L.interactive_login()  # This will prompt for password and handle login
 
-def time_():
-  sec=time.time()
-  local_time = time.ctime(sec)
-  print("Local time:", local_time)
+def download_user_highlights(L, username):
+    try:
+        profile = instaloader.Profile.from_username(L.context, username)
+        for highlight in profile.get_highlights():
+            for item in highlight.get_items():
+                L.download_storyitem(item, '{}_{}/{}'.format(username, highlight.title, item.date_utc))
+        print(f"Highlights downloaded successfully for user: {username}")
+    except instaloader.exceptions.InstaloaderException as e:
+        print(f"Error downloading highlights for user {username}: {e}")
 
+def download_user_stories(L, username):
+    try:
+        user_id = instaloader.Profile.from_username(L.context, username).userid
+        for story in L.get_stories([user_id]):
+            for item in story.get_items():
+                L.download_storyitem(item, '{}_stories/{}'.format(username, item.date_utc))
+        print(f"Stories downloaded successfully for user: {username}")
+    except instaloader.exceptions.InstaloaderException as e:
+        print(f"Error downloading stories for user {username}: {e}")
 
-scheduler = sched.scheduler(time.time, time.sleep)
+if __name__ == "__main__":
+    # Create an Instaloader instance
+    L = instaloader.Instaloader()
 
-def notification(message):
-    requests.post("https://ntfy.sivahomelab.online/4UyIRzBtfevKHJ1y", 
-      data=message)
+    # Set the session file path
+    session_file_path = '~/.config/instaloader/session-sivhx_06'
 
-# def json_(log_obj):
-#   with open("log_instagram.json", "w") as outfile:
-#     outfile.write(log_obj)
+    # Call the login function
+    login_and_load_session(L, session_file_path)
 
-class Person:
-  def __init__(self, username,id_):
-    self.username = username
-    self.id=id_
-    self.logid="--login "+id_
+    # Replace the usernames with the ones you want to download
+    usernames_to_download = ['kethar.exe', 'wikk.i_1812']
 
-  def fulldownload(self):
-    result = os.popen("instaloader --dirname-pattern=/root/storage {} {}".format(self.username,self.logid)).read()
-    time_()
-    print("1.fulldownload"+self.username)
-
-  def profile(self):
-    result = os.popen("instaloader --profile {} {}".format(self.username,self.logid)).read()
-    time_()
-    print("2.profile"+self.username)
-
-  def fulldownload_laststamp(self):
-    result = os.popen('instaloader --latest-stamps {} {}'.format(self.username,self.logid)).read()
-    time_()
-    print("3.laststamp"+self.username)
-
-  def fulldownload_stories(self):
-    #result = os.popen('echo "--stories" {} {}'.format(self.username,self.logid)).read()
-    result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
-    if "400 Bad Request" in error_message:
-      message="400 Bad Request"
-      notification(message)
-    elif "401 Unauthorized" in error_message:
-      message="401 Unauthorized"
-      notification(message)
-    else:
-      print(f"Error occurred: {e}")   
-    time_() 
-    notification("5.highlight"+self.username)
-    print('5.highlight'+self.username)
-    time_()
-    notification("4.story"+self.username)
-    print("4.story"+self.username)
-
-  def fulldownload_highlights(self):
-    result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()
-    
-    if "400 Bad Request" in error_message:
-      message="400 Bad Request"
-      notification(message)
-    elif "401 Unauthorized" in error_message:
-      message="401 Unauthorized"
-      notification(message)
-    else:
-      print(f"Error occurred: {e}")   
-    time_() 
-    notification("5.highlight"+self.username)
-    print('5.highlight'+self.username)
-
-
-
-  def fulldownload_tagged(self):
-    result = os.popen('instaloader --tagged {} {}'.format(self.username,self.logid)).read()  
-    time_()
-    print('6.tag'+self.username)
-
-  def fulldownload_geotags(self):
-    result = os.popen('instaloader --geotags profile {} {}'.format(self.username,self.logid)).read() 
-    time_()
-    print('7.geo'+self.username)
-
-
-
-def time_sheduler(person):
-  person.fulldownload_stories()
-
-
-def time_sheduler1(person):
-  person.fulldownload_highlights()
-
-
-list_=[p9,p10,p11,p3,p4,p5,p6,p12]
-
-
-for i in list_:
-
-  time_sheduler(i)
-  time.sleep(300)
-  time_sheduler1(i)
-  time.sleep(300)
-
-
-
- 
-
-
-
+    # Call the functions to download highlights and stories for the specified users
+    for username in usernames_to_download:
+        download_user_highlights(L, username)
+        download_user_stories(L, username)
