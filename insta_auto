@@ -1,8 +1,14 @@
+from email import message
 import os
 import sched
 import time
 import threading
 import json
+import schedule
+import requests
+from datetime import datetime
+
+now = datetime.now()
 
 def time_():
   sec=time.time()
@@ -11,6 +17,10 @@ def time_():
 
 
 scheduler = sched.scheduler(time.time, time.sleep)
+
+def notification(message):
+    requests.post("https://ntfy.sivahomelab.online/4UyIRzBtfevKHJ1y", 
+      data=message)
 
 # def json_(log_obj):
 #   with open("log_instagram.json", "w") as outfile:
@@ -23,7 +33,7 @@ class Person:
     self.logid="--login "+id_
 
   def fulldownload(self):
-    result = os.popen("instaloader {} {}".format(self.username,self.logid)).read()
+    result = os.popen("instaloader --dirname-pattern=/root/storage {} {}".format(self.username,self.logid)).read()
     time_()
     print("1.fulldownload"+self.username)
 
@@ -38,14 +48,42 @@ class Person:
     print("3.laststamp"+self.username)
 
   def fulldownload_stories(self):
-    result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
-    time_()
-    print("4.story"+self.username)
+    try:
+    #result = os.popen('echo "--stories" {} {}'.format(self.username,self.logid)).read()
+      result = os.popen('instaloader --stories {} {}'.format(self.username,self.logid)).read()
+      time_()
+      notification("4.story"+self.username)
+      print("4.story"+self.username)
+    except Exception as e:
+      error_message = str(e)
+      if "400 Bad Request" in error_message:
+        message="400 Bad Request"
+        raise RequestError(notification(message))
+      elif "401 Unauthorized" in error_message:
+        message="401 Unauthorized"
+        raise RequestError(notification(message))
+      else:
+        print(f"Error occurred: {e}")
+
 
   def fulldownload_highlights(self):
-    result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()   
-    time_() 
-    print('5.highlight'+self.username)
+    #result = os.popen('echo --highlights {} {}'.format(self.username,self.logid)).read()
+    try:
+      result = os.popen('instaloader --highlights {} {}'.format(self.username,self.logid)).read()   
+      time_() 
+      notification("5.highlight"+self.username)
+      print('5.highlight'+self.username)
+    except Exception as e:
+      error_message = str(e)
+      if "400 Bad Request" in error_message:
+        message="400 Bad Request"
+        raise RequestError(notification(message))
+      elif "401 Unauthorized" in error_message:
+        message="401 Unauthorized"
+        raise RequestError(notification(message))
+      else:
+        print(f"Error occurred: {e}")
+
 
   def fulldownload_tagged(self):
     result = os.popen('instaloader --tagged {} {}'.format(self.username,self.logid)).read()  
@@ -57,11 +95,17 @@ class Person:
     time_()
     print('7.geo'+self.username)
 
-p1 = Person("_shwetha_232","sivhx_06")
-p2 = Person("abi__sridhar","sivhx_06")
+# p1 = Person("_shwetha_232","sivhx_06")
 p3 = Person("bhavyasree__15","sivhx_06")
 p4 = Person("pree26._","sivhx_06")
 p5 = Person("_.dharu._20","sivhx_06")
+p6 = Person("mansi_mali23","sivhx_06")
+p7 = Person("_.br.in.da._","sivhx_06")
+p8 = Person("pavithra_3210_","sivhx_06")
+p9 = Person("__.swarthmi","sivhx_06")
+p10 = Person("sravani.nerusu","sivhx_06")
+p11 = Person("haripriyayyyy","sivhx_06")
+p12 = Person("pavani_rajoli","sivhx_06")
 # p3 = Person("krithik_2005","bhuva_natara")
 
 
@@ -69,24 +113,53 @@ p5 = Person("_.dharu._20","sivhx_06")
 # p2.profile()
 
 def time_sheduler(person):
+  person.fulldownload_stories()
+
+
+def time_sheduler1(person):
   person.fulldownload_highlights()
-  person.fulldownload()
-  while True:
+  # scheduler.enter(2000, 1, person.fulldownload_stories, ())
+  # scheduler.enter(3000, 1, person.fulldownload_stories, ())
     
     # scheduler.enter(170, 1, person.profile, ())
     # scheduler.enter(150, 1, person.fulldownload_laststamp, ())
-    scheduler.enter(10, 1, person.fulldownload_stories, ())
+    
     # scheduler.enter(120, 1, person.fulldownload_highlights, ())
     # scheduler.enter(518400, 1, person.fulldownload_tagged, ())
     # scheduler.enter(604800, 1, person.fulldownload_geotags, ())
-    scheduler.run()
+  # scheduler.run()
 
-list_=[p1,p2,p3,p4,p5]
+list_=[p9,p10,p11,p3,p4,p5,p6,p12]
+# list_=[p12]
 
 for i in list_:
-  i = threading.Thread(target=time_sheduler, args=(i,))
-  i.start()
-  time.sleep(60)
+  # i = threading.Thread(target=time_sheduler, args=(i,))
+  # i.start()
+  time_sheduler(i)
+  time.sleep(1800)
+  time_sheduler1(i)
+  time.sleep(1800)
+
+
+
+ 
+# After every hour geeks() is called.
+# schedule.every(3).hour.do(p1.fulldownload_stories)
+# schedule.every(3).hour.do(p2.fulldownload_stories)
+# schedule.every(3).hour.do(p4.fulldownload_stories)
+# schedule.every(3).hour.do(p5.fulldownload_stories)
+ 
+# Every day at 12am or 00:00 time bedtime() is called.
+
+ 
+# Loop so that the scheduling task
+# keeps on running all time.
+# while True:
+ 
+#     # Checks whether a scheduled task 
+#     # is pending to run or not
+#     schedule.run_pending()
+#     time.sleep(1)
 
 
 
