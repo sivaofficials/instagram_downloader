@@ -129,16 +129,16 @@ def time_sheduler1(person):
     # scheduler.enter(604800, 1, person.fulldownload_geotags, ())
   # scheduler.run()
 
-list_=[p9,p10,p11,p3,p4,p5,p6,p12]
+list_=[p3,p4,p5,p6,p9,p10,p11,p3,p4,p5,p6,p12]
 # list_=[p12]
 
 for i in list_:
   # i = threading.Thread(target=time_sheduler, args=(i,))
   # i.start()
   time_sheduler(i)
-  time.sleep(1800)
+  time.sleep(300)
   time_sheduler1(i)
-  time.sleep(1800)
+  time.sleep(300)
 
 
 
